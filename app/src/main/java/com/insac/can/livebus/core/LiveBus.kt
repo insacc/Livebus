@@ -21,6 +21,13 @@ class LiveBus {
             // TODO implement remove event method
         }
 
+        /**
+         * This function creates a LiveEvent object and adds it to the
+         * mEvents hashMap if necessary, otherwise it just updates the event's value
+         *
+         * @param tag The tag for the event
+         * @param eventValue the value to be set to the event
+         */
         fun <T> postLiveEvent(tag: String, eventValue: T) {
             if (!mEvents.contains(tag)) {
                 val liveEvent = LiveEvent<T>()
