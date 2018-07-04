@@ -70,7 +70,7 @@ class SingleLiveEvent<T> : LiveEventBase<T>() {
         super.removeObserver(observer)
         // Remove from bus if there are no observer left
         if (!mPendingObserve && !hasObservers()) {
-            LiveBus.removeEvent(this)
+            LiveBus.getInstance().removeEvent(this)
         }
     }
 }
