@@ -1,0 +1,22 @@
+package com.insac.can.sample
+
+import android.arch.lifecycle.Observer
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import com.insac.can.livebus.core.LiveBus
+import kotlinx.android.synthetic.main.activity_second.*
+
+class SecondActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_second)
+
+        LiveBus.getInstance().subscribeLiveEvent("LiveEvent", String::class.java)
+                .observe(this, Observer {
+                    it?.let {
+                        live_event.text = it
+                    }
+                })
+    }
+}
