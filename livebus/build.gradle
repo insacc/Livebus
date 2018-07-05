@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
@@ -22,7 +22,6 @@ buildscript {
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.insac.can.livebus"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
