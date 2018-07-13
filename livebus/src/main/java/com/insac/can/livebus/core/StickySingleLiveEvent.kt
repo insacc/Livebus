@@ -38,5 +38,5 @@ class StickySingleLiveEvent<T> : LiveEventBase<T>() {
         value = null
     }
 
-    fun isConsumed() : Boolean = mPending.get()
+    fun isConsumed() : Boolean = !mPending.get()
 }
