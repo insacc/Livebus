@@ -15,9 +15,40 @@ class MainActivity : AppCompatActivity() {
         live_event_button.setOnClickListener {
             it?.let {
                 LiveBus.getInstance().postLiveEvent("LiveEvent", "TestLiveEvent")
-                val intent = Intent(this, SecondActivity::class.java)
-                startActivity(intent)
+                openSecondActivity()
             }
         }
+
+        single_live_event_button.setOnClickListener {
+            it?.let {
+                LiveBus.getInstance().postSingleEvent("SingleLiveEvent", "TestLiveEvent")
+                openSecondActivity()
+            }
+        }
+
+        sticky_live_event_button.setOnClickListener {
+            it?.let {
+                LiveBus.getInstance().postStickyEvent("StickyLiveEvent", "TestLiveEvent")
+                openSecondActivity()
+            }
+        }
+
+        sticky_single_live_event_button.setOnClickListener {
+            it?.let {
+                LiveBus.getInstance().postStickySingleEvent("StickySingleLiveEvent", "TestLiveEvent")
+                openSecondActivity()
+            }
+        }
+
+        open_second_activity_button.setOnClickListener{
+            it?.let {
+                openSecondActivity()
+            }
+        }
+    }
+
+    private fun openSecondActivity() {
+        val intent = Intent(this, SecondActivity::class.java)
+        startActivity(intent)
     }
 }
