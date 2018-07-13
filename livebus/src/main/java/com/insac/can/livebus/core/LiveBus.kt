@@ -1,5 +1,7 @@
 package com.insac.can.livebus.core
 
+import com.insac.can.livebus.utils.LiveBusException
+
 class LiveBus {
     companion object {
         private var mInstance: LiveBus? = null
@@ -85,43 +87,62 @@ class LiveBus {
     }
 
     fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
-        if (mEvents.containsKey(tag)) {
-            return mEvents[tag] as LiveEvent<T>
+        return if (mEvents.containsKey(tag)) {
+            try {
+                mEvents[tag] as LiveEvent<T>
+            } catch (e: Exception) {
+                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
+                        "bus doesn't have the LiveEvent type")
+            }
         } else {
             val liveEvent = LiveEvent<T>()
             mEvents.put(tag, liveEvent)
-            return liveEvent
+            liveEvent
         }
     }
 
     fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
-        if (mEvents.containsKey(tag)) {
-            return mEvents[tag] as SingleLiveEvent<T>
+        return if (mEvents.containsKey(tag)) {
+            try {
+                mEvents[tag] as SingleLiveEvent<T>
+            } catch (e: Exception) {
+                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
+                        "bus doesn't have the SingleLiveEvent type")
+            }
         } else {
             val liveEvent = SingleLiveEvent<T>()
             mEvents[tag] = liveEvent
-            return liveEvent
+            liveEvent
         }
     }
 
     fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
-        if (mEvents.containsKey(tag)) {
-            return mEvents[tag] as StickyLiveEvent<T>
+        return if (mEvents.containsKey(tag)) {
+            try {
+                mEvents[tag] as StickyLiveEvent<T>
+            } catch (e: Exception) {
+                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
+                        "bus doesn't have the StickyLiveEvent type")
+            }
         } else {
             val liveEvent = StickyLiveEvent<T>()
             mEvents[tag] = liveEvent
-            return liveEvent
+            liveEvent
         }
     }
 
     fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
-        if (mEvents.containsKey(tag)) {
-            return mEvents[tag] as StickySingleLiveEvent<T>
+        return if (mEvents.containsKey(tag)) {
+            try {
+                mEvents[tag] as StickySingleLiveEvent<T>
+            } catch (e: Exception) {
+                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
+                        "bus doesn't have the StickySingleLiveEvent type")
+            }
         } else {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
-            return liveEvent
+            liveEvent
         }
     }
-
 }
