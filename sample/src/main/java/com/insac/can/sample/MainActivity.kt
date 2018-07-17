@@ -33,12 +33,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        sticky_single_live_event_button.setOnClickListener {
+        /*sticky_single_live_event_button.setOnClickListener {
             it?.let {
                 LiveBus.getInstance().postStickySingleEvent("StickySingleLiveEvent", "TestLiveEvent")
                 openSecondActivity()
             }
-        }
+        }*/
 
         open_second_activity_button.setOnClickListener{
             it?.let {
