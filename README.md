@@ -64,31 +64,26 @@ LiveBus.getInstance().subscribeLiveEvent("EVENT_TAG", EVENT_VALUE_CLASS_TYPE)
                         // Process event
                     }
                 })
-                
-                
-
 ```
 
 ##### Subscribing to SingleLiveEvent
-```LiveBus.getInstance().subscribeSingleLiveEvent("EVENT_TAG", EVENT_VALUE_CLASS_TYPE)
+```
+LiveBus.getInstance().subscribeSingleLiveEvent("EVENT_TAG", EVENT_VALUE_CLASS_TYPE)
                 .observe(this, Observer {
                     it?.let {
                         // Process event
                     }
                 })
-                
-                
 ```
 
 ##### Subscribing to StickyLiveEvent
-```LiveBus.getInstance().subscribeStickyLiveEvent("EVENT_TAG", EVENT_VALUE_CLASS_TYPE)
+```
+LiveBus.getInstance().subscribeStickyLiveEvent("EVENT_TAG", EVENT_VALUE_CLASS_TYPE)
                 .observe(this, Observer {
                     it?.let {
                         // Process event
                     }
                 })
-                
-                
 ```
 
 ###### As the object returned by these functions are `LiveData` objects, no unsubscribe calls are needed, since it'll be automatically handled by the android OS.
@@ -97,7 +92,6 @@ LiveBus.getInstance().subscribeLiveEvent("EVENT_TAG", EVENT_VALUE_CLASS_TYPE)
 #### Removing an event from the bus
 ```
 LiveBus.getInstance().removeEvent("EVENT_TAG")
-
 ```
 
 
