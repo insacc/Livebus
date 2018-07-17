@@ -72,7 +72,7 @@ class LiveBus {
         mEvents[tag]?.value = eventValue
     }
 
-    fun <T> removeStickyEvent(tag: String) {
+    fun removeEvent(tag: String) {
         if (!mEvents.contains(tag)) return
 
         mEvents.remove(tag)
