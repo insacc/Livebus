@@ -54,7 +54,7 @@ class LiveBus {
         mEvents[tag]?.value = eventValue
     }
 
-    fun <T> postStickySingleEvent(tag: String, eventValue: T) {
+    private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
         if (!mEvents.contains(tag)) {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -131,7 +131,7 @@ class LiveBus {
         }
     }
 
-    fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             try {
                 mEvents[tag] as StickySingleLiveEvent<T>

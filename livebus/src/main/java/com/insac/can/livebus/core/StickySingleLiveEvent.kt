@@ -7,7 +7,7 @@ import android.support.annotation.Nullable
 import android.util.Log
 import java.util.concurrent.atomic.AtomicBoolean
 
-class StickySingleLiveEvent<T> : LiveEventBase<T>() {
+internal class StickySingleLiveEvent<T> : LiveEventBase<T>() {
     private val TAG = "SingleLiveEvent"
     private val mPending = AtomicBoolean(false)
 
