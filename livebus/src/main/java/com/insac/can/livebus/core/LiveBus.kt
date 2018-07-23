@@ -1,11 +1,13 @@
 package com.insac.can.livebus.core
 
-import com.insac.can.livebus.utils.LiveBusException
+import com.insac.can.livebus.utils.exceptionWrapper
 
 class LiveBus {
     companion object {
         private var mInstance: LiveBus? = null
         private var mEvents: HashMap<String, LiveEventBase<out Any?>> = HashMap()
+        private const val CAST_EXCEPTION_MESSAGE = "LiveEvent casting exception! LiveEventBase saved on the " +
+                "bus doesn't have the LiveEvent type"
 
         fun getInstance(): LiveBus {
             if (mInstance == null) {
@@ -42,7 +44,9 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        mEvents[tag]?.value = eventValue
+        exceptionWrapper(fun() {
+            mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
     }
 
     fun <T> postSingleEvent(tag: String, eventValue: T) {
@@ -51,7 +55,9 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        mEvents[tag]?.value = eventValue
+        exceptionWrapper(fun() {
+            mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
     }
 
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
@@ -60,7 +66,9 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        mEvents[tag]?.value = eventValue
+        exceptionWrapper(fun() {
+            mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
     }
 
     fun <T> postStickyEvent(tag: String, eventValue: T) {
@@ -69,7 +77,9 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        mEvents[tag]?.value = eventValue
+        exceptionWrapper(fun() {
+            mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
     }
 
     fun removeEvent(tag: String) {
@@ -88,27 +98,21 @@ class LiveBus {
 
     fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            try {
-                mEvents[tag] as LiveEvent<T>
-            } catch (e: Exception) {
-                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
-                        "bus doesn't have the LiveEvent type")
-            }
+            exceptionWrapper(fun(): LiveEventBase<T> {
+                return mEvents[tag] as LiveEvent<T>
+            }, CAST_EXCEPTION_MESSAGE)
         } else {
             val liveEvent = LiveEvent<T>()
-            mEvents.put(tag, liveEvent)
+            mEvents[tag] = liveEvent
             liveEvent
         }
     }
 
     fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            try {
-                mEvents[tag] as SingleLiveEvent<T>
-            } catch (e: Exception) {
-                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
-                        "bus doesn't have the SingleLiveEvent type")
-            }
+            exceptionWrapper(fun(): LiveEventBase<T> {
+                return mEvents[tag] as SingleLiveEvent<T>
+            }, CAST_EXCEPTION_MESSAGE)
         } else {
             val liveEvent = SingleLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -118,12 +122,9 @@ class LiveBus {
 
     fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            try {
-                mEvents[tag] as StickyLiveEvent<T>
-            } catch (e: Exception) {
-                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
-                        "bus doesn't have the StickyLiveEvent type")
-            }
+            exceptionWrapper(fun(): LiveEventBase<T> {
+                return mEvents[tag] as StickyLiveEvent<T>
+            }, CAST_EXCEPTION_MESSAGE)
         } else {
             val liveEvent = StickyLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -133,12 +134,9 @@ class LiveBus {
 
     private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            try {
-                mEvents[tag] as StickySingleLiveEvent<T>
-            } catch (e: Exception) {
-                throw LiveBusException("LiveEvent casting exception! LiveEventBase saved on the " +
-                        "bus doesn't have the StickySingleLiveEvent type")
-            }
+            exceptionWrapper(fun(): LiveEventBase<T> {
+                return mEvents[tag] as StickySingleLiveEvent<T>
+            }, CAST_EXCEPTION_MESSAGE)
         } else {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
