@@ -15,7 +15,7 @@ class StickyLiveEvent<T> : LiveEventBase<T>() {
         mConsumeCount++
     }
 
-    fun getConsumeCount(): Int = mConsumeCount
+    private fun getConsumeCount(): Int = mConsumeCount
 
     override fun setValue(value: T) {
         super.setValue(value)
