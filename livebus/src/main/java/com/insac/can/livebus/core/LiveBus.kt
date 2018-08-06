@@ -1,6 +1,5 @@
 package com.insac.can.livebus.core
 
-import android.arch.lifecycle.MutableLiveData
 import android.os.Looper
 import com.insac.can.livebus.utils.LiveBusException
 import com.insac.can.livebus.utils.exceptionWrapper
@@ -58,6 +57,23 @@ class LiveBus {
     }
 
     /**
+     * This function creates a LiveEvent object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postPublishLiveEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = LiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
+    }
+
+    /**
      * This function creates a `SingleLiveEvent` object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
      *
@@ -73,6 +89,23 @@ class LiveBus {
         }
 
         publishEvent(tag, eventValue)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread.
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postPublishSingleEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = SingleLiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
     }
 
     /**
@@ -94,6 +127,23 @@ class LiveBus {
     }
 
     /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    private fun <T> postPublishStickySingleEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = StickySingleLiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
+    }
+
+    /**
      * This function creates a `StickyLiveEvent` object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
      *
@@ -111,6 +161,22 @@ class LiveBus {
         publishEvent(tag, eventValue)
     }
 
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postPublishStickyEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = StickyLiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
+    }
 
     /**
      * Removes the event identified by @param tag from the Bus.
