@@ -53,9 +53,24 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
+    }
+
+    /**
+     * This function creates a LiveEvent object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postPublishLiveEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = LiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
     }
 
     /**
@@ -73,9 +88,24 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread.
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postPublishSingleEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = SingleLiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
     }
 
     /**
@@ -93,9 +123,24 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
+    }
+
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    private fun <T> postPublishStickySingleEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = StickySingleLiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
     }
 
     /**
@@ -113,11 +158,25 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
     }
 
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postPublishStickyEvent(tag: String, eventValue: T) {
+        if (!mEvents.contains(tag)) {
+            val liveEvent = StickyLiveEvent<T>()
+            mEvents[tag] = liveEvent
+        }
+
+        postPublishEvent(tag, eventValue)
+    }
 
     /**
      * Removes the event identified by @param tag from the Bus.
@@ -182,6 +241,18 @@ class LiveBus {
             mEvents[tag] = liveEvent
             liveEvent
         }
+    }
+
+    private fun <T> publishEvent(tag: String, eventValue: T) {
+        exceptionWrapper(fun() {
+            mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
+    }
+
+    private fun <T> postPublishEvent(tag: String, eventValue: T) {
+        exceptionWrapper(fun() {
+            (mEvents[tag] as LiveEventBase<T>).postValue(eventValue)
+        }, CAST_EXCEPTION_MESSAGE)
     }
 
     /**
