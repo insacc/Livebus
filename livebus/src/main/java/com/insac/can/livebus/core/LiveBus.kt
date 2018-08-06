@@ -1,5 +1,7 @@
 package com.insac.can.livebus.core
 
+import android.os.Looper
+import com.insac.can.livebus.utils.LiveBusException
 import com.insac.can.livebus.utils.exceptionWrapper
 
 class LiveBus {
@@ -44,6 +46,8 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postLiveEvent(tag: String, eventValue: T) {
+        assertMainThread("postLiveEvent")
+
         if (!mEvents.contains(tag)) {
             val liveEvent = LiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -62,6 +66,8 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postSingleEvent(tag: String, eventValue: T) {
+        assertMainThread("postSingleEvent")
+
         if (!mEvents.contains(tag)) {
             val liveEvent = SingleLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -80,6 +86,8 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
+        assertMainThread("postStickySingleEvent")
+
         if (!mEvents.contains(tag)) {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -98,6 +106,8 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postStickyEvent(tag: String, eventValue: T) {
+        assertMainThread("postStickyEvent")
+
         if (!mEvents.contains(tag)) {
             val liveEvent = StickyLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -187,6 +197,13 @@ class LiveBus {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
             liveEvent
+        }
+    }
+
+    private fun assertMainThread(methodName: String) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            throw LiveBusException("Cannot invoke " + methodName + " on a background"
+                    + " thread")
         }
     }
 }
