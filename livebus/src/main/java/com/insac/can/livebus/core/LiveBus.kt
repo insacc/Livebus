@@ -53,9 +53,7 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
     }
 
     /**
@@ -73,9 +71,7 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
     }
 
     /**
@@ -93,9 +89,7 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
     }
 
     /**
@@ -113,9 +107,7 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        publishEvent(tag, eventValue)
     }
 
 
@@ -182,6 +174,12 @@ class LiveBus {
             mEvents[tag] = liveEvent
             liveEvent
         }
+    }
+
+    private fun <T> publishEvent(tag: String, eventValue: T) {
+        exceptionWrapper(fun() {
+            mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
     }
 
     /**
