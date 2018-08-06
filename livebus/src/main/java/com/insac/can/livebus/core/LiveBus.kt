@@ -18,6 +18,11 @@ class LiveBus {
         }
     }
 
+    /**
+     * Removes the event equals to @param liveEvent from the Bus.
+     * @return true if the Bus contains the `LiveEvent` passed to the function,
+     * false otherwise
+     */
     fun <T> removeEvent(liveEvent: LiveEventBase<T>): Boolean {
         if (!mEvents.containsValue(liveEvent)) return false
 
@@ -49,6 +54,13 @@ class LiveBus {
         }, CAST_EXCEPTION_MESSAGE)
     }
 
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     fun <T> postSingleEvent(tag: String, eventValue: T) {
         if (!mEvents.contains(tag)) {
             val liveEvent = SingleLiveEvent<T>()
@@ -60,6 +72,13 @@ class LiveBus {
         }, CAST_EXCEPTION_MESSAGE)
     }
 
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
         if (!mEvents.contains(tag)) {
             val liveEvent = StickySingleLiveEvent<T>()
@@ -71,6 +90,13 @@ class LiveBus {
         }, CAST_EXCEPTION_MESSAGE)
     }
 
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     fun <T> postStickyEvent(tag: String, eventValue: T) {
         if (!mEvents.contains(tag)) {
             val liveEvent = StickyLiveEvent<T>()
@@ -82,6 +108,10 @@ class LiveBus {
         }, CAST_EXCEPTION_MESSAGE)
     }
 
+
+    /**
+     * Removes the event identified by @param tag from the Bus.
+     */
     fun removeEvent(tag: String) {
         if (!mEvents.contains(tag)) return
 
@@ -96,6 +126,10 @@ class LiveBus {
         return null
     }
 
+    /**
+     * Returns the `LiveEvent` object, creates one if necessary
+     * @return the LiveEvent object specified by the @param tag
+     */
     fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
@@ -108,6 +142,10 @@ class LiveBus {
         }
     }
 
+    /**
+     * Returns the `SingleLiveEvent` object, creates one if necessary
+     * @return the `SingleLiveEvent` object specified by the @param tag
+     */
     fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
@@ -120,6 +158,10 @@ class LiveBus {
         }
     }
 
+    /**
+     * Returns the `StickyLiveEvent` object, creates one if necessary
+     * @return the `StickyLiveEvent` object specified by the @param tag
+     */
     fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
@@ -132,6 +174,10 @@ class LiveBus {
         }
     }
 
+    /**
+     * Returns the `StickySingleLiveEvent` object, creates one if necessary
+     * @return the `StickySingleLiveEvent` object specified by the @param tag
+     */
     private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {

@@ -4,6 +4,10 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 
+/**
+ * Base class for all `LiveEvent` classes. Removes the observer
+ * before adding it to prevent duplicate observers.
+ */
 open class LiveEventBase<T> : MutableLiveData<T>() {
     protected var mPendingObserve: Boolean = false
 
