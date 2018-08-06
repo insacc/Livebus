@@ -1,5 +1,7 @@
 package com.insac.can.livebus.core
 
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.Observer
 import android.os.Looper
 import com.insac.can.livebus.utils.LiveBusException
 import com.insac.can.livebus.utils.exceptionWrapper
@@ -241,6 +243,30 @@ class LiveBus {
             mEvents[tag] = liveEvent
             liveEvent
         }
+    }
+
+    /**
+     * Adds the @param observer to  the `LiveEvent` specified by the @param tag.
+     */
+    fun <T> observeLiveEvent(tag: String, type: Class<T>, lifecycleOwner: LifecycleOwner,
+                             observer: Observer<T>) {
+        subscribeLiveEvent(tag, type).observe(lifecycleOwner, observer)
+    }
+
+    /**
+     * Adds the @param observer to  the `SingleLiveEvent` specified by the @param tag.
+     */
+    fun <T> observeSingleLiveEvent(tag: String, type: Class<T>, lifecycleOwner: LifecycleOwner,
+                                   observer: Observer<T>) {
+        subscribeSingleLiveEvent(tag, type).observe(lifecycleOwner, observer)
+    }
+
+    /**
+     * Adds the @param observer to  the `StickyLiveEvent` specified by the @param tag.
+     */
+    fun <T> observeStickyLiveEvent(tag: String, type: Class<T>, lifecycleOwner: LifecycleOwner,
+                                   observer: Observer<T>) {
+        subscribeStickyLiveEvent(tag, type).observe(lifecycleOwner, observer)
     }
 
     private fun <T> publishEvent(tag: String, eventValue: T) {
