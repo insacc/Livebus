@@ -1,5 +1,6 @@
 package com.insac.can.livebus.core
 
+import android.arch.lifecycle.MutableLiveData
 import android.os.Looper
 import com.insac.can.livebus.utils.LiveBusException
 import com.insac.can.livebus.utils.exceptionWrapper
@@ -179,6 +180,12 @@ class LiveBus {
     private fun <T> publishEvent(tag: String, eventValue: T) {
         exceptionWrapper(fun() {
             mEvents[tag]?.value = eventValue
+        }, CAST_EXCEPTION_MESSAGE)
+    }
+
+    private fun <T> postPublishEvent(tag: String, eventValue: T) {
+        exceptionWrapper(fun() {
+            (mEvents[tag] as LiveEventBase<T>).postValue(eventValue)
         }, CAST_EXCEPTION_MESSAGE)
     }
 
