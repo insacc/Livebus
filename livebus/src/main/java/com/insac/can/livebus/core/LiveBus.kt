@@ -38,6 +38,56 @@ class LiveBus {
         return false
     }
 
+    private fun <T> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<T>) {
+        setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
+            liveEvent?.value = eventValue
+        })
+    }
+
+    private fun <T> postLiveEventValue(tag: String, eventValue: T, liveEventType: Class<T>) {
+        setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
+            liveEvent?.postValue(eventValue)
+        })
+    }
+
+    private fun <T> setValue(tag: String, eventValue: T, liveEventType: Class<T>,
+                             func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
+        assertMainThread("postLiveEvent")
+
+        if (!mEvents.contains(tag)) {
+            val liveEvent = createLiveEvent(liveEventType)
+            mEvents[tag] = liveEvent
+        }
+
+        exceptionWrapper(fun() {
+            func(mEvents[tag] as LiveEventBase<T>, eventValue)
+        }, CAST_EXCEPTION_MESSAGE)
+    }
+
+    private fun <T> createLiveEvent(liveEventClass: Class<T>): LiveEventBase<T> {
+        return when (liveEventClass) {
+            LiveEvent::class.java -> {
+                LiveEvent<T>()
+            }
+
+            SingleLiveEvent::class.java -> {
+                SingleLiveEvent<T>()
+            }
+
+            StickyLiveEvent::class.java -> {
+                StickyLiveEvent<T>()
+            }
+
+            StickySingleLiveEvent::class.java -> {
+                StickySingleLiveEvent<T>()
+            }
+
+            else -> {
+                LiveEvent<T>()
+            }
+        }
+    }
+
     /**
      * This function creates a LiveEvent object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
