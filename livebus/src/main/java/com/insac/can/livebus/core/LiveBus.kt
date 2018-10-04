@@ -51,7 +51,7 @@ class LiveBus {
     }
 
     private fun <T, K> setValue(tag: String, eventValue: T, liveEventType: Class<K>,
-                             func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
+                                func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
         assertMainThread(liveEventType.name)
 
         if (!mEvents.contains(tag)) {
@@ -132,6 +132,49 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
 
+    /**
+     * This function creates a LiveEvent object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setSingleLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setStickySingleLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setStickyLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+    }
 
     /**
      * Removes the event identified by @param tag from the Bus.
