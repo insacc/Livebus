@@ -143,6 +143,13 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, LiveEvent::class.java)
     }
 
+    /**
+     * This function creates a LiveEvent object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     fun <T> postLiveEventValue(tag: String, eventValue: T) {
         postLiveEventValue(tag, eventValue, LiveEvent::class.java)
     }
@@ -158,6 +165,13 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
     }
 
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     fun <T> postSingleLiveEventValue(tag: String, eventValue: T) {
         postLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
     }
@@ -173,6 +187,13 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
     }
 
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     fun <T> postStickySingleLiveEventValue(tag: String, eventValue: T) {
         postLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
     }
@@ -188,6 +209,13 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
 
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
     fun <T> postStickyLiveEventValue(tag: String, eventValue: T) {
         postLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
