@@ -44,7 +44,7 @@ class LiveBus {
         })
     }
 
-    private fun <T> postLiveEventValue(tag: String, eventValue: T, liveEventType: Class<T>) {
+    private fun <T, K> postLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
         setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
             liveEvent?.postValue(eventValue)
         })
@@ -143,6 +143,10 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, LiveEvent::class.java)
     }
 
+    fun <T> postLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, LiveEvent::class.java)
+    }
+
     /**
      * This function creates a `SingleLiveEvent` object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
@@ -152,6 +156,10 @@ class LiveBus {
      */
     fun <T> setSingleLiveEventValue(tag: String, eventValue: T) {
         setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+    }
+
+    fun <T> postSingleLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
     }
 
     /**
@@ -165,6 +173,10 @@ class LiveBus {
         setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
     }
 
+    fun <T> postStickySingleLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+    }
+
     /**
      * This function creates a `StickyLiveEvent` object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
@@ -174,6 +186,10 @@ class LiveBus {
      */
     fun <T> setStickyLiveEventValue(tag: String, eventValue: T) {
         setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+    }
+
+    fun <T> postStickyLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
 
     /**
