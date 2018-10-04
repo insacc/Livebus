@@ -12,23 +12,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        live_event_button.setOnClickListener {
+        live_event_button.setOnClickListener { it ->
             it?.let {
-                LiveBus.getInstance().postLiveEvent("LiveEvent", "TestLiveEvent")
+                LiveBus.getInstance().setLiveEventValue("LiveEvent", "TestLiveEvent")
                 openSecondActivity()
             }
         }
 
-        single_live_event_button.setOnClickListener {
+        single_live_event_button.setOnClickListener { it ->
             it?.let {
-                LiveBus.getInstance().postSingleEvent("SingleLiveEvent", "TestLiveEvent")
+                LiveBus.getInstance().setSingleLiveEventValue("SingleLiveEvent", "TestLiveEvent")
                 openSecondActivity()
             }
         }
 
-        sticky_live_event_button.setOnClickListener {
+        sticky_live_event_button.setOnClickListener { it ->
             it?.let {
-                LiveBus.getInstance().postStickyEvent("StickyLiveEvent", "TestLiveEvent")
+                LiveBus.getInstance().setStickyLiveEventValue("StickyLiveEvent", "TestLiveEvent")
                 openSecondActivity()
             }
         }
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             }
         }*/
 
-        open_second_activity_button.setOnClickListener{
+        open_second_activity_button.setOnClickListener{ it ->
             it?.let {
                 openSecondActivity()
             }
