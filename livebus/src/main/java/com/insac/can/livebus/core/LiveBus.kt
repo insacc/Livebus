@@ -38,7 +38,7 @@ class LiveBus {
         return false
     }
 
-    private fun <T> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<T>) {
+    private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
         setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
             liveEvent?.value = eventValue
         })
@@ -50,9 +50,9 @@ class LiveBus {
         })
     }
 
-    private fun <T> setValue(tag: String, eventValue: T, liveEventType: Class<T>,
+    private fun <T, K> setValue(tag: String, eventValue: T, liveEventType: Class<K>,
                              func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
-        assertMainThread("postLiveEvent")
+        assertMainThread(liveEventType.name)
 
         if (!mEvents.contains(tag)) {
             val liveEvent = createLiveEvent(liveEventType)
@@ -96,16 +96,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postLiveEvent(tag: String, eventValue: T) {
-        assertMainThread("postLiveEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = LiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java)
     }
 
     /**
@@ -116,16 +107,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postSingleEvent(tag: String, eventValue: T) {
-        assertMainThread("postSingleEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = SingleLiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
     }
 
     /**
@@ -136,16 +118,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
-        assertMainThread("postStickySingleEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = StickySingleLiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
     }
 
     /**
@@ -156,16 +129,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postStickyEvent(tag: String, eventValue: T) {
-        assertMainThread("postStickyEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = StickyLiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
 
 
