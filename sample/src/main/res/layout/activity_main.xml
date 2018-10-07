@@ -37,6 +37,38 @@
         android:text="Send Sticky Single Live Event" />
 
     <Button
+        android:id="@+id/bg_live_event_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:text="Send Live Event on the Bg Thread" />
+
+    <Button
+        android:id="@+id/bg_single_live_event_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:text="Send Single Live Event on the Bg Thread" />
+
+    <Button
+        android:id="@+id/bg_sticky_live_event_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:text="Send Sticky Live Event on the Bg Thread" />
+
+    <Button
+        android:id="@+id/bg_sticky_single_live_event_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:text="Send Sticky Single Live Event on the Bg Thread" />
+
+    <Button
         android:id="@+id/open_second_activity_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

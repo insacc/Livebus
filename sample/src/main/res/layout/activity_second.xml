@@ -81,7 +81,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Live Event: " />
+            android:text="Live Event from Bg Thread: " />
 
         <TextView
             android:id="@+id/bg_live_event"
@@ -98,7 +98,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sticky Live Event: " />
+            android:text="Sticky Live Event from Bg Thread: " />
 
         <TextView
             android:id="@+id/bg_sticky_live_event"
@@ -115,7 +115,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Single Live Event: " />
+            android:text="Single Live Event from Bg Thread: " />
 
         <TextView
             android:id="@+id/bg_single_live_event"
@@ -132,7 +132,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sticky Single Live Event : " />
+            android:text="Sticky Single Live Event from Bg Thread : " />
 
         <TextView
             android:id="@+id/bg_sticky_single_live_event"
