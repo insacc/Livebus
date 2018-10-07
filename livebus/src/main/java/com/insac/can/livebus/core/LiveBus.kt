@@ -38,6 +38,56 @@ class LiveBus {
         return false
     }
 
+    private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
+        setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
+            liveEvent?.value = eventValue
+        })
+    }
+
+    private fun <T, K> postLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
+        setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
+            liveEvent?.postValue(eventValue)
+        })
+    }
+
+    private fun <T, K> setValue(tag: String, eventValue: T, liveEventType: Class<K>,
+                                func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
+        assertMainThread(liveEventType.name)
+
+        if (!mEvents.contains(tag)) {
+            val liveEvent = createLiveEvent(liveEventType)
+            mEvents[tag] = liveEvent
+        }
+
+        exceptionWrapper(fun() {
+            func(mEvents[tag] as LiveEventBase<T>, eventValue)
+        }, CAST_EXCEPTION_MESSAGE)
+    }
+
+    private fun <T> createLiveEvent(liveEventClass: Class<T>): LiveEventBase<T> {
+        return when (liveEventClass) {
+            LiveEvent::class.java -> {
+                LiveEvent<T>()
+            }
+
+            SingleLiveEvent::class.java -> {
+                SingleLiveEvent<T>()
+            }
+
+            StickyLiveEvent::class.java -> {
+                StickyLiveEvent<T>()
+            }
+
+            StickySingleLiveEvent::class.java -> {
+                StickySingleLiveEvent<T>()
+            }
+
+            else -> {
+                LiveEvent<T>()
+            }
+        }
+    }
+
     /**
      * This function creates a LiveEvent object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
@@ -46,16 +96,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postLiveEvent(tag: String, eventValue: T) {
-        assertMainThread("postLiveEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = LiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java)
     }
 
     /**
@@ -66,16 +107,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postSingleEvent(tag: String, eventValue: T) {
-        assertMainThread("postSingleEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = SingleLiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
     }
 
     /**
@@ -86,16 +118,7 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
-        assertMainThread("postStickySingleEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = StickySingleLiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
     }
 
     /**
@@ -106,18 +129,96 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postStickyEvent(tag: String, eventValue: T) {
-        assertMainThread("postStickyEvent")
-
-        if (!mEvents.contains(tag)) {
-            val liveEvent = StickyLiveEvent<T>()
-            mEvents[tag] = liveEvent
-        }
-
-        exceptionWrapper(fun() {
-            mEvents[tag]?.value = eventValue
-        }, CAST_EXCEPTION_MESSAGE)
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
 
+    /**
+     * This function creates a LiveEvent object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a LiveEvent object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, LiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setSingleLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postSingleLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setStickySingleLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postStickySingleLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setStickyLiveEventValue(tag: String, eventValue: T) {
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+    }
+
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     *
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postStickyLiveEventValue(tag: String, eventValue: T) {
+        postLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+    }
 
     /**
      * Removes the event identified by @param tag from the Bus.

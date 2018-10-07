@@ -13,19 +13,19 @@ class SecondActivity : AppCompatActivity() {
         setContentView(R.layout.activity_second)
 
         LiveBus.getInstance().subscribeLiveEvent("LiveEvent", String::class.java)
-                .observe(this, Observer {
+                .observe(this, Observer { it ->
                     it?.let {
                         live_event.text = it
                     }
                 })
         LiveBus.getInstance().subscribeSingleLiveEvent("SingleLiveEvent", String::class.java)
-                .observe(this, Observer {
+                .observe(this, Observer { it ->
                     it?.let {
                         single_live_event.text = it
                     }
                 })
         LiveBus.getInstance().subscribeStickyLiveEvent("StickyLiveEvent", String::class.java)
-                .observe(this, Observer {
+                .observe(this, Observer { it ->
                     it?.let {
                         sticky_live_event.text = it
                     }
