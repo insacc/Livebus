@@ -36,5 +36,24 @@ class SecondActivity : AppCompatActivity() {
                         sticky_single_live_event.text = it
                     }
                 })*/
+
+        LiveBus.getInstance().subscribeLiveEvent("LiveEventBG", String::class.java)
+                .observe(this, Observer { it ->
+                    it?.let {
+                        bg_live_event.text = it
+                    }
+                })
+        LiveBus.getInstance().subscribeSingleLiveEvent("SingleLiveEventBG", String::class.java)
+                .observe(this, Observer { it ->
+                    it?.let {
+                        bg_single_live_event.text = it
+                    }
+                })
+        LiveBus.getInstance().subscribeStickyLiveEvent("StickyLiveEventBG", String::class.java)
+                .observe(this, Observer { it ->
+                    it?.let {
+                        bg_sticky_live_event.text = it
+                    }
+                })
     }
 }
