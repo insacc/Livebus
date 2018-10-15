@@ -23,14 +23,14 @@ You can add the library through maven
 <dependency>
   <groupId>org.insac.core</groupId>
   <artifactId>livebus</artifactId>
-  <version>0.2.2</version>
+  <version>0.3.0</version>
   <type>pom</type>
 </dependency>
 ``` 
 or through gradle
 
 ```
-implementation 'org.insac.core:livebus:0.2.2'
+implementation 'org.insac.core:livebus:0.3.0'
 ```
 
 #### Usage
@@ -47,11 +47,17 @@ implementation 'org.insac.core:livebus:0.2.2'
 
 Every event on LiveBus is identified by an unique tag. The same tag needs to be used to publish an event and subscribe to an event. Every subscribe/ publish function calls will create an empty event `LiveData` on the bus if it hasn't been created already.
 
-- `postSingleEvent(tag: String, eventValue: T)` : Use this function if you want to publish a `SingleLiveEvent`.
+- `setSingleLiveEventValue(tag: String, eventValue: T)` : Use this function if you want to publish a `SingleLiveEvent`from the UI thread.
 
-- `postLiveEvent(tag: String, eventValue: T)` : Use this function to publish a `LiveEvent`.
+- `postSingleLiveEventValue(tag: String, eventValue: T)` : Use this function if you want to publish a `SingleLiveEvent`from a background thread
 
-- `postStickyEvent(tag: String, eventValue: T) ` : Use this function to publish a `StickyEvent`.
+- `setLiveEventValue(tag: String, eventValue: T)` : Use this function to publish a `LiveEvent` from the UI thread.
+
+- `postLiveEventValue(tag: String, eventValue: T)` : Use this function to publish a `LiveEvent` from a background thread.
+
+- `setStickyLiveEventValue(tag: String, eventValue: T) ` : Use this function to publish a `StickyEvent` from the UI thread.
+
+- `postStickyLiveEventValue(tag: String, eventValue: T) ` : Use this function to publish a `StickyEvent` from a background thread.
 
 ##### Subscribing to an Event
 
