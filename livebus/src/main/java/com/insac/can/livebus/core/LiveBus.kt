@@ -95,6 +95,11 @@ class LiveBus {
      * @param tag The tag for the event
      * @param eventValue the value to be set to the event
      */
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.0. Please use setLiveEventValue(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("setLiveEventValue(tag, eventValue)")
+    )
     fun <T> postLiveEvent(tag: String, eventValue: T) {
         setLiveEventValue(tag, eventValue, LiveEvent::class.java)
     }
@@ -106,6 +111,12 @@ class LiveBus {
      * @param tag The tag for the event
      * @param eventValue the value to be set to the event
      */
+
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.0. Please use setSingleLiveEventValue(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("setSingleLiveEventValue(tag, eventValue)")
+    )
     fun <T> postSingleEvent(tag: String, eventValue: T) {
         setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
     }
@@ -117,6 +128,12 @@ class LiveBus {
      * @param tag The tag for the event
      * @param eventValue the value to be set to the event
      */
+
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.0. Please use setStickySingleLiveEventValue(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("setStickySingleLiveEventValue(tag, eventValue)")
+    )
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
         setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
     }
@@ -128,6 +145,12 @@ class LiveBus {
      * @param tag The tag for the event
      * @param eventValue the value to be set to the event
      */
+
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.0. Please use setStickyLiveEventValue(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("setStickyLiveEventValue(tag, eventValue)")
+    )
     fun <T> postStickyEvent(tag: String, eventValue: T) {
         setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
     }
