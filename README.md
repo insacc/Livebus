@@ -19,18 +19,19 @@ LiveBus is an event bus for Android which uses `LiveData` component of the andro
      
 #### Add LiveBus to your project
 You can add the library through maven
-```
+
+```xml
 <dependency>
   <groupId>org.insac.core</groupId>
   <artifactId>livebus</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
   <type>pom</type>
 </dependency>
 ``` 
 or through gradle
 
 ```
-implementation 'org.insac.core:livebus:0.3.0'
+implementation 'org.insac.core:livebus:0.3.1'
 ```
 
 #### Usage
@@ -49,15 +50,21 @@ Every event on LiveBus is identified by an unique tag. The same tag needs to be 
 
 - `setSingleLiveEventValue(tag: String, eventValue: T)` : Use this function if you want to publish a `SingleLiveEvent`from the UI thread.
 
+
 - `postSingleLiveEventValue(tag: String, eventValue: T)` : Use this function if you want to publish a `SingleLiveEvent`from a background thread
+
 
 - `setLiveEventValue(tag: String, eventValue: T)` : Use this function to publish a `LiveEvent` from the UI thread.
 
+
 - `postLiveEventValue(tag: String, eventValue: T)` : Use this function to publish a `LiveEvent` from a background thread.
+
 
 - `setStickyLiveEventValue(tag: String, eventValue: T) ` : Use this function to publish a `StickyEvent` from the UI thread.
 
+
 - `postStickyLiveEventValue(tag: String, eventValue: T) ` : Use this function to publish a `StickyEvent` from a background thread.
+
 
 ##### Subscribing to an Event
 
