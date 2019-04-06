@@ -38,6 +38,7 @@ class LiveBus {
     }
 
     private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
+        assertMainThread(liveEventType.name)
         setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
             liveEvent?.value = eventValue
         })
@@ -51,8 +52,6 @@ class LiveBus {
 
     private fun <T, K> setValue(tag: String, eventValue: T, liveEventType: Class<K>,
                                 func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
-        assertMainThread(liveEventType.name)
-
         if (!mEvents.contains(tag)) {
             val liveEvent = createLiveEvent(liveEventType)
             mEvents[tag] = liveEvent
@@ -263,7 +262,7 @@ class LiveBus {
      * Returns the `LiveEvent` object, creates one if necessary
      * @return the LiveEvent object specified by the @param tag
      */
-    fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    fun <T> subscribeLiveEvent(tag: String, valueType: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
                 return mEvents[tag] as LiveEvent<T>
@@ -279,7 +278,7 @@ class LiveBus {
      * Returns the `SingleLiveEvent` object, creates one if necessary
      * @return the `SingleLiveEvent` object specified by the @param tag
      */
-    fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    fun <T> subscribeSingleLiveEvent(tag: String, valueType: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
                 return mEvents[tag] as SingleLiveEvent<T>
@@ -295,7 +294,7 @@ class LiveBus {
      * Returns the `StickyLiveEvent` object, creates one if necessary
      * @return the `StickyLiveEvent` object specified by the @param tag
      */
-    fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    fun <T> subscribeStickyLiveEvent(tag: String, valueType: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
                 return mEvents[tag] as StickyLiveEvent<T>
@@ -311,7 +310,7 @@ class LiveBus {
      * Returns the `StickySingleLiveEvent` object, creates one if necessary
      * @return the `StickySingleLiveEvent` object specified by the @param tag
      */
-    private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    private fun <T> subscribeStickySingleLiveEvent(tag: String, valueType: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
             exceptionWrapper(fun(): LiveEventBase<T> {
                 return mEvents[tag] as StickySingleLiveEvent<T>
