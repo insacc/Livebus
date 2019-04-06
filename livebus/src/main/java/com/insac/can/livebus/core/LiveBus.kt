@@ -9,6 +9,7 @@ class LiveBus {
         private var mEvents: HashMap<String, LiveEventBase<out Any?>> = HashMap()
         private const val CAST_EXCEPTION_MESSAGE = "LiveEvent casting exception! LiveEventBase saved on the " +
                 "bus doesn't have the LiveEvent type"
+        private const val NO_DELAY_SPECIFIED = 0L
 
         fun getInstance(): LiveBus {
             if (mInstance == null) {
@@ -37,29 +38,40 @@ class LiveBus {
         return false
     }
 
-    private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
+    private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>,
+                                         delayInMillis: Long) {
         assertMainThread(liveEventType.name)
-        setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
+        setValue(tag, eventValue, liveEventType, delayInMillis, fun(liveEvent, eventValue) {
             liveEvent?.value = eventValue
         })
     }
 
-    private fun <T, K> postLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
-        setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
+    private fun <T, K> postLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>,
+                                          delayInMillis: Long) {
+        setValue(tag, eventValue, liveEventType, delayInMillis, fun(liveEvent, eventValue) {
             liveEvent?.postValue(eventValue)
         })
     }
 
     private fun <T, K> setValue(tag: String, eventValue: T, liveEventType: Class<K>,
+                                delayInMillis: Long,
                                 func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
         if (!mEvents.contains(tag)) {
             val liveEvent = createLiveEvent(liveEventType)
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
-            func(mEvents[tag] as LiveEventBase<T>, eventValue)
-        }, CAST_EXCEPTION_MESSAGE)
+        if (delayInMillis == NO_DELAY_SPECIFIED) {
+            exceptionWrapper(fun() {
+                func(mEvents[tag] as LiveEventBase<T>, eventValue)
+            }, CAST_EXCEPTION_MESSAGE)
+        } else {
+            ScheduleManager.getInstance().schedule(delayInMillis, fun() {
+                exceptionWrapper(fun() {
+                    func(mEvents[tag] as LiveEventBase<T>, eventValue)
+                }, CAST_EXCEPTION_MESSAGE)
+            })
+        }
     }
 
     private fun <T> createLiveEvent(liveEventClass: Class<T>): LiveEventBase<T> {
@@ -99,7 +111,7 @@ class LiveBus {
             replaceWith = ReplaceWith("setLiveEventValue(tag, eventValue)")
     )
     fun <T> postLiveEvent(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, LiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java, NO_DELAY_SPECIFIED)
     }
 
     /**
@@ -116,7 +128,7 @@ class LiveBus {
             replaceWith = ReplaceWith("setSingleLiveEventValue(tag, eventValue)")
     )
     fun <T> postSingleEvent(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java, NO_DELAY_SPECIFIED)
     }
 
     /**
@@ -133,7 +145,7 @@ class LiveBus {
             replaceWith = ReplaceWith("setStickySingleLiveEventValue(tag, eventValue)")
     )
     private fun <T> postStickySingleEvent(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java, NO_DELAY_SPECIFIED)
     }
 
     /**
@@ -150,7 +162,7 @@ class LiveBus {
             replaceWith = ReplaceWith("setStickyLiveEventValue(tag, eventValue)")
     )
     fun <T> postStickyEvent(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java, NO_DELAY_SPECIFIED)
     }
 
     /**
@@ -161,7 +173,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> setLiveEventValue(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, LiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a LiveEvent object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value after the delay
+     * specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setDelayedLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        setLiveEventValue(tag, eventValue, LiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -172,7 +197,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postLiveEventValue(tag: String, eventValue: T) {
-        postLiveEventValue(tag, eventValue, LiveEvent::class.java)
+        postLiveEventValue(tag, eventValue, LiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a LiveEvent object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread after
+     * the delay specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postDelayedLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        postLiveEventValue(tag, eventValue, LiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -183,7 +221,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> setSingleLiveEventValue(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value after the delay
+     * specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setDelayedSingleLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        setLiveEventValue(tag, eventValue, SingleLiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -194,7 +245,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postSingleLiveEventValue(tag: String, eventValue: T) {
-        postLiveEventValue(tag, eventValue, SingleLiveEvent::class.java)
+        postLiveEventValue(tag, eventValue, SingleLiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a `SingleLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     * after the delay specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postDelayedSingleLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        postLiveEventValue(tag, eventValue, SingleLiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -205,7 +269,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> setStickySingleLiveEventValue(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * after the delay specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setDelayedStickySingleLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        setLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -216,7 +293,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postStickySingleLiveEventValue(tag: String, eventValue: T) {
-        postLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java)
+        postLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a `StickySingleLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     * after the delay specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postDelayedStickySingleLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        postLiveEventValue(tag, eventValue, StickySingleLiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -227,7 +317,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> setStickyLiveEventValue(tag: String, eventValue: T) {
-        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the
+     * mEvents hashMap if necessary, otherwise it just updates the event's value
+     * after the delay specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> setDelayedStickyLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        setLiveEventValue(tag, eventValue, StickyLiveEvent::class.java, delayInMillis)
     }
 
     /**
@@ -238,7 +341,20 @@ class LiveBus {
      * @param eventValue the value to be set to the event
      */
     fun <T> postStickyLiveEventValue(tag: String, eventValue: T) {
-        postLiveEventValue(tag, eventValue, StickyLiveEvent::class.java)
+        postLiveEventValue(tag, eventValue, StickyLiveEvent::class.java, NO_DELAY_SPECIFIED)
+    }
+
+    /**
+     * This function creates a `StickyLiveEvent` object and adds it to the mEvents hashMap
+     * if necessary, otherwise it just updates the event's value on the background thread
+     * after the delay specified with @param delayInMillis
+     *
+     * @param delayInMillis the delay in milliseconds after which the value will be set
+     * @param tag The tag for the event
+     * @param eventValue the value to be set to the event
+     */
+    fun <T> postDelayedStickyLiveEventValue(tag: String, eventValue: T, delayInMillis: Long) {
+        postLiveEventValue(tag, eventValue, StickyLiveEvent::class.java, delayInMillis)
     }
 
     /**
