@@ -39,6 +39,8 @@ class LiveBus {
     }
 
     private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
+        assertMainThread(liveEventType.name)
+
         setValue(tag, eventValue, liveEventType, fun(liveEvent, eventValue) {
             liveEvent?.value = eventValue
         })
@@ -52,8 +54,6 @@ class LiveBus {
 
     private fun <T, K> setValue(tag: String, eventValue: T, liveEventType: Class<K>,
                                 func: (liveEvent: LiveEventBase<T>?, value: T) -> Unit) {
-        assertMainThread(liveEventType.name)
-
         if (!mEvents.contains(tag)) {
             val liveEvent = createLiveEvent(liveEventType)
             mEvents[tag] = liveEvent
@@ -325,7 +325,7 @@ class LiveBus {
     }
 
     private fun assertMainThread(methodName: String) {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
             throw LiveBusException("Cannot invoke " + methodName + " on a background"
                     + " thread")
         }
