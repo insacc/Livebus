@@ -31,7 +31,7 @@ You can add the library through maven
 or through gradle
 
 ```
-implementation 'org.insac.core:livebus:0.3.1'
+implementation 'org.insac.core:livebus:0.3.2'
 ```
 
 #### Usage
