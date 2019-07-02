@@ -38,6 +38,16 @@ class LiveBus {
         return false
     }
 
+    /**
+     * Removes the live event specified by the tag
+     * @return true if an event with the passed tag exists and removed, false otherwise
+     */
+    fun removeEventByTag(tag: String): Boolean {
+        mEvents.remove(tag) ?: return false
+
+        return true
+    }
+
     private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
         assertMainThread(liveEventType.name)
 
