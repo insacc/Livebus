@@ -77,23 +77,23 @@ class LiveBus {
     private fun <T> createLiveEvent(liveEventClass: Class<T>): LiveEventBase<T> {
         return when (liveEventClass) {
             LiveEvent::class.java -> {
-                LiveEvent<T>()
+                LiveEvent()
             }
 
             SingleLiveEvent::class.java -> {
-                SingleLiveEvent<T>()
+                SingleLiveEvent()
             }
 
             StickyLiveEvent::class.java -> {
-                StickyLiveEvent<T>()
+                StickyLiveEvent()
             }
 
             StickySingleLiveEvent::class.java -> {
-                StickySingleLiveEvent<T>()
+                StickySingleLiveEvent()
             }
 
             else -> {
-                LiveEvent<T>()
+                LiveEvent()
             }
         }
     }
