@@ -68,9 +68,9 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
+        exceptionWrapper(CAST_EXCEPTION_MESSAGE) {
             func(mEvents[tag] as LiveEventBase<T>, eventValue)
-        }, CAST_EXCEPTION_MESSAGE)
+        }
     }
 
     /**
@@ -251,9 +251,9 @@ class LiveBus {
      */
     fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as LiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = LiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -267,9 +267,9 @@ class LiveBus {
      */
     fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as SingleLiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = SingleLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -283,9 +283,9 @@ class LiveBus {
      */
     fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as StickyLiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = StickyLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -299,9 +299,9 @@ class LiveBus {
      */
     private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as StickySingleLiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent

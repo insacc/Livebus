@@ -1,6 +1,5 @@
 package com.insac.can.livebus.utils
 
-import java.util.concurrent.Callable
 
 fun exceptionWrapper(func: () -> Unit) {
     try {
@@ -28,7 +27,7 @@ fun <T> exceptionWrapper(func: () -> T): T {
     }
 }
 
-fun <T> exceptionWrapper(func: () -> T, exceptionMessage: String): T {
+fun <T> exceptionWrapper(exceptionMessage: String, func: () -> T): T {
     return try {
         func()
     } catch (ex: Exception) {
@@ -37,7 +36,7 @@ fun <T> exceptionWrapper(func: () -> T, exceptionMessage: String): T {
     }
 }
 
-fun exceptionWrapper(func: () -> Unit, exceptionMessage: String) {
+fun exceptionWrapper(exceptionMessage: String, func: () -> Unit) {
     try {
         func()
     } catch (ex: Exception) {
