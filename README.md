@@ -24,7 +24,7 @@ You can add the library through maven
 <dependency>
   <groupId>org.insac.core</groupId>
   <artifactId>livebus</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <type>pom</type>
 </dependency>
 ``` 
