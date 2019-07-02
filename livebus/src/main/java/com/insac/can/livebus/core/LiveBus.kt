@@ -1,7 +1,6 @@
 package com.insac.can.livebus.core
 
-import android.os.Looper
-import com.insac.can.livebus.utils.LiveBusException
+import com.insac.can.livebus.utils.assertMainThread
 import com.insac.can.livebus.utils.exceptionWrapper
 
 class LiveBus {
@@ -307,13 +306,6 @@ class LiveBus {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
             liveEvent
-        }
-    }
-
-    private fun assertMainThread(methodName: String) {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw LiveBusException("Cannot invoke " + methodName + " on a background"
-                    + " thread")
         }
     }
 }
