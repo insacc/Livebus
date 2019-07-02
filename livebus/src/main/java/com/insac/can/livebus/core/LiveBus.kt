@@ -1,7 +1,6 @@
 package com.insac.can.livebus.core
 
-import android.os.Looper
-import com.insac.can.livebus.utils.LiveBusException
+import com.insac.can.livebus.utils.assertMainThread
 import com.insac.can.livebus.utils.exceptionWrapper
 
 class LiveBus {
@@ -38,6 +37,16 @@ class LiveBus {
         return false
     }
 
+    /**
+     * Removes the live event specified by the tag
+     * @return true if an event with the passed tag exists and removed, false otherwise
+     */
+    fun removeEventByTag(tag: String): Boolean {
+        mEvents.remove(tag) ?: return false
+
+        return true
+    }
+
     private fun <T, K> setLiveEventValue(tag: String, eventValue: T, liveEventType: Class<K>) {
         assertMainThread(liveEventType.name)
 
@@ -59,32 +68,8 @@ class LiveBus {
             mEvents[tag] = liveEvent
         }
 
-        exceptionWrapper(fun() {
+        exceptionWrapper(CAST_EXCEPTION_MESSAGE) {
             func(mEvents[tag] as LiveEventBase<T>, eventValue)
-        }, CAST_EXCEPTION_MESSAGE)
-    }
-
-    private fun <T> createLiveEvent(liveEventClass: Class<T>): LiveEventBase<T> {
-        return when (liveEventClass) {
-            LiveEvent::class.java -> {
-                LiveEvent<T>()
-            }
-
-            SingleLiveEvent::class.java -> {
-                SingleLiveEvent<T>()
-            }
-
-            StickyLiveEvent::class.java -> {
-                StickyLiveEvent<T>()
-            }
-
-            StickySingleLiveEvent::class.java -> {
-                StickySingleLiveEvent<T>()
-            }
-
-            else -> {
-                LiveEvent<T>()
-            }
         }
     }
 
@@ -246,13 +231,26 @@ class LiveBus {
     /**
      * Removes the event identified by @param tag from the Bus.
      */
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.3. Please use removeEventByTag(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("removeEventByTag(tag)")
+    )
     fun removeEvent(tag: String) {
         if (!mEvents.contains(tag)) return
 
         mEvents.remove(tag)
     }
 
-    fun subscribeEvent(tag: String): LiveEventBase<out Any?>? {
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.3. Please use getEvent(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("getEvent(tag)")
+    )
+    fun subscribeEvent(tag: String): LiveEventBase<out Any?>? =
+            getEvent(tag)
+
+    fun getEvent(tag: String): LiveEventBase<out Any?>? {
         if (mEvents.containsKey(tag)) {
             return mEvents[tag]
         }
@@ -264,11 +262,23 @@ class LiveBus {
      * Returns the `LiveEvent` object, creates one if necessary
      * @return the LiveEvent object specified by the @param tag
      */
-    fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.3. Please use getLiveEvent(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("getLiveEvent(tag, type)")
+    )
+    fun <T> subscribeLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> =
+            getLiveEvent(tag, type)
+
+    /**
+     * Returns the `LiveEvent` object, creates one if necessary
+     * @return the LiveEvent object specified by the @param tag
+     */
+    fun <T> getLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as LiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = LiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -280,11 +290,23 @@ class LiveBus {
      * Returns the `SingleLiveEvent` object, creates one if necessary
      * @return the `SingleLiveEvent` object specified by the @param tag
      */
-    fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.3. Please use getSingleLiveEvent(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("getSingleLiveEvent(tag, type)")
+    )
+    fun <T> subscribeSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> =
+            getSingleLiveEvent(tag, type)
+
+    /**
+     * Returns the `SingleLiveEvent` object, creates one if necessary
+     * @return the `SingleLiveEvent` object specified by the @param tag
+     */
+    fun <T> getSingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as SingleLiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = SingleLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -296,11 +318,23 @@ class LiveBus {
      * Returns the `StickyLiveEvent` object, creates one if necessary
      * @return the `StickyLiveEvent` object specified by the @param tag
      */
-    fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.3. Please use getStickyLiveEvent(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("getStickyLiveEvent(tag, type)")
+    )
+    fun <T> subscribeStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> =
+            getStickyLiveEvent(tag, type)
+
+    /**
+     * Returns the `StickyLiveEvent` object, creates one if necessary
+     * @return the `StickyLiveEvent` object specified by the @param tag
+     */
+    fun <T> getStickyLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as StickyLiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = StickyLiveEvent<T>()
             mEvents[tag] = liveEvent
@@ -312,22 +346,27 @@ class LiveBus {
      * Returns the `StickySingleLiveEvent` object, creates one if necessary
      * @return the `StickySingleLiveEvent` object specified by the @param tag
      */
-    private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
+    @Deprecated(
+            message = "This function is deprecated as of version 0.3.3. Please use getStickySingleLiveEvent(..) " +
+                    "instead ",
+            replaceWith = ReplaceWith("getStickySingleLiveEvent(tag, type)")
+    )
+    private fun <T> subscribeStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> =
+            getStickySingleLiveEvent(tag, type)
+
+    /**
+     * Returns the `StickySingleLiveEvent` object, creates one if necessary
+     * @return the `StickySingleLiveEvent` object specified by the @param tag
+     */
+    private fun <T> getStickySingleLiveEvent(tag: String, type: Class<T>): LiveEventBase<T> {
         return if (mEvents.containsKey(tag)) {
-            exceptionWrapper(fun(): LiveEventBase<T> {
+            exceptionWrapper(CAST_EXCEPTION_MESSAGE, fun(): LiveEventBase<T> {
                 return mEvents[tag] as StickySingleLiveEvent<T>
-            }, CAST_EXCEPTION_MESSAGE)
+            })
         } else {
             val liveEvent = StickySingleLiveEvent<T>()
             mEvents[tag] = liveEvent
             liveEvent
-        }
-    }
-
-    private fun assertMainThread(methodName: String) {
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw LiveBusException("Cannot invoke " + methodName + " on a background"
-                    + " thread")
         }
     }
 }
