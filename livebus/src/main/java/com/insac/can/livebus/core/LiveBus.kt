@@ -74,30 +74,6 @@ class LiveBus {
         }, CAST_EXCEPTION_MESSAGE)
     }
 
-    private fun <T> createLiveEvent(liveEventClass: Class<T>): LiveEventBase<T> {
-        return when (liveEventClass) {
-            LiveEvent::class.java -> {
-                LiveEvent()
-            }
-
-            SingleLiveEvent::class.java -> {
-                SingleLiveEvent()
-            }
-
-            StickyLiveEvent::class.java -> {
-                StickyLiveEvent()
-            }
-
-            StickySingleLiveEvent::class.java -> {
-                StickySingleLiveEvent()
-            }
-
-            else -> {
-                LiveEvent()
-            }
-        }
-    }
-
     /**
      * This function creates a LiveEvent object and adds it to the
      * mEvents hashMap if necessary, otherwise it just updates the event's value
